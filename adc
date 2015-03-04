@@ -1,0 +1,136 @@
+ldi r16, 0xff  //aktivacija vseh vihodov_portov
+ out ddrd, r16
+ out ddrb, r16
+ ldi r17, 0
+ out ddrc, r17
+
+ldi   A,0b1110_0011  ;[ADEN,ADSC,ADATE,ADIF,_,ADIE,ADPS2,ADPS1,ADPS0]
+sts   ADCSRA,A       ;START ANALOG TO DIGITAL CONVERSION
+ldi   A,0b0000_0011  ;SELECT ADC #3 (PORT C 3)
+sts   ADMUX,A
+
+ ////
+ ldi r16, 0xff
+ out portd, r16
+ out portb, r16
+ ldi r17, 0
+ out portb, r17
+
+mux:
+ lds A, ADCL         ;MUST READ ADCL BEFORE ADCH
+ lds AH, ADCH        ;REQUIRED, THOUGH NOT USED
+
+	 cpi AH, 0
+	 //aga mis siis A reg
+	 breq kontroll0
+	 cpi AH, 1
+	 //aga mis on siis A reg
+	breq kontroll1
+	 cpi AH, 2
+	 breq kontroll2
+	 cpi AH, 3
+	breq kontroll3
+ rjmp mux 
+
+
+
+ kontroll0:
+ cpi A, 102
+ brlo null
+ cpi A, 204
+ brlo yks
+ rjmp mux
+
+ kontroll1:
+ cpi A, 51
+ brlo kaks
+  cpi A, 153
+ brlo kolm
+ rjmp mux
+
+ kontroll2:
+ cpi A, 6
+ brlo neli
+ cpi A, 102
+ brlo viis
+  cpi A, 204
+ brlo kuus
+ rjmp mux
+
+ kontroll3:
+ cpi A, 51
+ brlo seitse
+  cpi A, 153
+ brlo kaheksa
+   cpi A, 255
+ brlo yheksa
+ rjmp mux
+
+
+null:
+ldi r16, ~0x3F
+out portd, r16
+rcall segment2   
+rjmp mux
+
+yks:
+
+ldi r17, ~0x06
+out portd, r17
+rcall segment2   
+rjmp mux
+
+kaks:
+ldi r18, ~0x5b
+out portd, r18
+rcall segment2   
+rjmp mux
+
+kolm:
+ldi r19, ~0x4f
+out portd, r19
+rcall segment2   
+rjmp mux
+
+neli:
+ldi r20, ~0x66
+out portd, r20
+rcall segment2   
+rjmp mux
+
+viis:
+ldi r21, ~0x6d
+out portd, r21
+rcall segment2   
+rjmp mux
+
+kuus:
+ldi r22, ~0x7d
+out portd, r22
+rcall segment2   
+rjmp mux
+
+seitse:
+ldi r22, ~0x07
+out portd, r22
+rcall segment2   
+rjmp mux
+
+kaheksa:
+ldi r23, ~0x7f
+out portd, r23
+rcall segment2   
+rjmp mux
+
+yheksa:
+ldi r24, ~0x6f
+out portd, r24
+rcall segment2   
+rjmp mux
+
+
+
+segment2: 
+sbi portb, 0                 ;pordi B esimene bitt pannakse üheks
+cbi portb, 0                 ;pordi B esimene bitt pannakse nulliks
+ret
