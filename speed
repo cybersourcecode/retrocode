@@ -1,0 +1,3 @@
+mov  R, AH
+ldi  R, 0x5e
+mov  R, A
