@@ -1,62 +1,62 @@
 
 
-rjmp Knopki            
+rjmp Button          
  
 Tabel:                                             
 .db ~0x3F,~0x06,~0x5b,~0x4f,~0x66,~0x6d,~0x7d,~0x07,~0x7f,~0x6f,0,0    
  
 
-Knopki:
+Button:
 ldi r16, 0b1011_1111                        
 out portd, r16         
 nop
 in r17, pinc                       
 andi r17, 0x04                                                      
-breq Algus
-rjmp Knopki
+breq Start
+rjmp Button
 
- //desjatki  levii segment
-Algus:                   
+ //left segment
+Start:                   
  
 ldi r31, high(Tabel<<1)  
 ldi r30, low(Tabel<<1)   
-                                
-Tsykkel:                   
+ 
+Cikl:                   
 lpm r16, z+               
 cpi r16,0                                                     
-breq Algus2                                            
+breq Button                                           
 out portd, r16            
 rcall segment1            
 
 push r31    
 push r30
 
- //pravii segment
- Algus2:                   
+ //right segment
+Start2:                   
  
 ldi r31, high(Tabel<<1)  
 ldi r30, low(Tabel<<1)   
 
-tsikl2:
+Cikl2:
 lpm r16, z+               
 cpi r16,0                                       
 breq memmo                
 out portd, r16             
 rcall segment2            
-rcall aeg      
-rjmp tsikl2
+rcall time     
+rjmp Cikl2
 
  Memmo:
  pop r30  
  pop r31
- rjmp Tsykkel
+ rjmp Cikl
 
-segment1:          //levii segm
+segment1:          //left segm
 sbi portb, 1       
 cbi portb, 1
 ret         
 
-segment2:          //pravii segm
+segment2:          //right segm
 sbi portb, 0       
 cbi portb, 0         
 ret
