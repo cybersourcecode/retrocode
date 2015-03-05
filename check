@@ -1,0 +1,7 @@
+
+cpi r25, ~0x5b
+brne cikl2 
+cpi r16, ~0x6d                 
+breq  relay2 
+
+rjmp cikl2
